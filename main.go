@@ -14,6 +14,10 @@ func main() {
 
 	router := mux.NewRouter()
 
+	//User APIs
+	router.HandleFunc("/user", handlers.HandlerCreateAccount).Methods("POST")
+	router.HandleFunc("/login", handlers.HandlerLogin).Methods("POST")
+
 	//League APIs
 	router.HandleFunc("/league", handlers.HandlerCreateLeague).Methods("POST")
 	router.HandleFunc("/league", handlers.HandlerGetLeagues).Methods("GET")

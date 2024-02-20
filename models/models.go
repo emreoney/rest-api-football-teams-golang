@@ -27,3 +27,10 @@ type Player struct {
 	Position string `json:"position"`
 	TeamID   uint   `json:"teamID"`
 }
+
+type Account struct {
+	gorm.Model
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Token    string `json:"token"`
+}

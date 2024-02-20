@@ -15,5 +15,5 @@ const dbConnection = "host=localhost port=5432 user=postgres dbname=footballProj
 func Init() {
 	DB, err = gorm.Open(postgres.Open(dbConnection), &gorm.Config{})
 
-	DB.AutoMigrate(models.League{}, models.Player{}, models.Team{})
+	DB.AutoMigrate(models.League{}, models.Player{}, models.Team{}, models.Account{})
 }
