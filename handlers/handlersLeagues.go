@@ -3,8 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"gomod/database"
 	"gomod/models"
+	"gomod/services"
 	"net/http"
 	"strconv"
 
@@ -15,9 +15,9 @@ func HandlerCreateLeague(w http.ResponseWriter, r *http.Request) {
 	var newLeague models.League
 	json.NewDecoder(r.Body).Decode(&newLeague)
 
-	database.DB.Create(&newLeague)
+	leagueInformation := services.CreateLeague(newLeague)
 
-	data, err := json.Marshal(newLeague)
+	data, err := json.Marshal(leagueInformation)
 	if err != nil {
 		fmt.Println("Hata: ", err.Error())
 	}
@@ -26,9 +26,10 @@ func HandlerCreateLeague(w http.ResponseWriter, r *http.Request) {
 
 func HandlerGetLeagues(w http.ResponseWriter, r *http.Request) {
 	var leagues []models.League
-	database.DB.Preload("Teams").Find(&leagues)
 
-	data, err := json.Marshal(leagues)
+	leaguesInformations := services.GetLeagues(leagues)
+
+	data, err := json.Marshal(leaguesInformations)
 	if err != nil {
 		fmt.Println("Hata: ", err.Error())
 	}
@@ -42,7 +43,7 @@ func HanglerGetLeauge(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Hata: ", err.Error())
 	}
 	league.ID = uint(leagueID)
-	database.DB.Preload("Teams").First(&league)
+	services.GetLeague(league)
 
 	data, _ := json.Marshal(league)
 	fmt.Fprintf(w, string(data))
@@ -56,7 +57,8 @@ func HandlerUpdateLeague(w http.ResponseWriter, r *http.Request) {
 	}
 	updatedLeague.ID = uint(leagueID)
 	json.NewDecoder(r.Body).Decode(&updatedLeague)
-	database.DB.Save(&updatedLeague)
+
+	services.UpdateLeague(updatedLeague)
 
 	data, err := json.Marshal(updatedLeague)
 	fmt.Fprintf(w, string(data))
@@ -67,7 +69,7 @@ func HandlerDeleteLeague(w http.ResponseWriter, r *http.Request) {
 	leagueID, _ := strconv.Atoi(variables["id"])
 	deletedLeague.ID = uint(leagueID)
 
-	database.DB.Delete(&deletedLeague)
+	services.DeleteLeague(deletedLeague)
 
 	responseMessage := models.Information{"Data has deleted"}
 	data, err := json.Marshal(responseMessage)

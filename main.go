@@ -17,6 +17,7 @@ func main() {
 	//User APIs
 	router.HandleFunc("/user", handlers.HandlerCreateAccount).Methods("POST")
 	router.HandleFunc("/login", handlers.HandlerLogin).Methods("POST")
+	router.HandleFunc("/user", handlers.HandlerGetUsers).Methods("GET")
 
 	//League APIs
 	router.HandleFunc("/league", handlers.HandlerCreateLeague).Methods("POST")

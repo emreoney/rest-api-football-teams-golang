@@ -42,3 +42,14 @@ func HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+func HandlerGetUsers(w http.ResponseWriter, r *http.Request) {
+	var users []models.Account
+	database.DB.Find(&users)
+
+	data, err := json.Marshal(users)
+	if err != nil {
+		fmt.Println("HATA: ", err.Error())
+	}
+	fmt.Fprintf(w, string(data))
+}
