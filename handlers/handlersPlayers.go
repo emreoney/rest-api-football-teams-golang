@@ -3,8 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"gomod/database"
 	"gomod/models"
+	"gomod/services"
 	"net/http"
 	"strconv"
 
@@ -15,9 +15,9 @@ func HandlerCreatePlayer(w http.ResponseWriter, r *http.Request) {
 	var newPlayer models.Player
 	json.NewDecoder(r.Body).Decode(&newPlayer)
 
-	database.DB.Create(&newPlayer)
+	playerInformations := services.CreatePlayer(newPlayer)
 
-	data, err := json.Marshal(newPlayer)
+	data, err := json.Marshal(playerInformations)
 	if err != nil {
 		fmt.Println("HATA: ", err.Error())
 	}
@@ -25,9 +25,11 @@ func HandlerCreatePlayer(w http.ResponseWriter, r *http.Request) {
 }
 func HandlerGetPlayers(w http.ResponseWriter, r *http.Request) {
 	var players []models.Player
-	database.DB.Find(&players)
+	//	database.DB.Find(&players)
 
-	data, _ := json.Marshal(players)
+	playersInformaitons := services.GetPlayers(players)
+
+	data, _ := json.Marshal(playersInformaitons)
 	fmt.Fprintf(w, string(data))
 }
 func HandlerGetPlayer(w http.ResponseWriter, r *http.Request) {
@@ -36,9 +38,10 @@ func HandlerGetPlayer(w http.ResponseWriter, r *http.Request) {
 	playerID, _ := strconv.Atoi(variables["id"])
 
 	player.ID = uint(playerID)
-	database.DB.First(&player)
+	//database.DB.First(&player)
+	playerInformations := services.GetPlayer(player)
 
-	data, _ := json.Marshal(player)
+	data, _ := json.Marshal(playerInformations)
 	fmt.Fprintf(w, string(data))
 }
 func HandlerUpdatePlayer(w http.ResponseWriter, r *http.Request) {
@@ -47,8 +50,10 @@ func HandlerUpdatePlayer(w http.ResponseWriter, r *http.Request) {
 	playerID, _ := strconv.Atoi(variables["id"])
 	updatedPlayer.ID = uint(playerID)
 	json.NewDecoder(r.Body).Decode(&updatedPlayer)
-	database.DB.Save(&updatedPlayer)
-	data, _ := json.Marshal(updatedPlayer)
+
+	//database.DB.Save(&updatedPlayer)
+	playerInformations := services.UpdatePlayer(updatedPlayer)
+	data, _ := json.Marshal(playerInformations)
 	fmt.Fprintf(w, string(data))
 }
 func HandlerDeletePlayer(w http.ResponseWriter, r *http.Request) {
@@ -56,7 +61,9 @@ func HandlerDeletePlayer(w http.ResponseWriter, r *http.Request) {
 	variables := mux.Vars(r)
 	playerID, _ := strconv.Atoi(variables["id"])
 	deletedPlayer.ID = uint(playerID)
-	database.DB.Delete(&deletedPlayer)
+
+	// database.DB.Delete(&deletedPlayer)
+	services.DeletePlayer(deletedPlayer)
 	responseMessage := models.Information{"Data has deleted"}
 	data, err := json.Marshal(responseMessage)
 	if err != nil {
